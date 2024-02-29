@@ -1,6 +1,9 @@
+using InspectionRequestAPI.Common.Models;
+using InspectionRequestAPI.Entities.Helpers;
+
 namespace InspectionRequestAPI.Entities;
 
-public class User
+public class User : IHasDomainEvents
 {
     public Guid Id { get; set; }
     public bool IsEngineer { get; set; } = false;
@@ -13,4 +16,5 @@ public class User
     public string PhoneNumber { get; set; } = string.Empty;
     public List<Tool> ToolsICanUse { get; set; } = new();
     public List<Attendance> Attendances { get; set; } = new();
+    public List<DomainEvent> DomainEvents {get;} = new();
 }

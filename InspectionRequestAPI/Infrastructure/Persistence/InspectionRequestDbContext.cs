@@ -1,6 +1,7 @@
 
 using System.Reflection;
 using InspectionRequestAPI.Common.Interfaces;
+using InspectionRequestAPI.Common.Models;
 using InspectionRequestAPI.Entities;
 using InspectionRequestAPI.Entities.Helpers;
 using InspectionRequestAPI.Infrastructure.Services;
@@ -11,13 +12,15 @@ namespace InspectionRequestAPI.Infrastructure.Persistence;
 public class InspectionRequestDbContext : DbContext
 {
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IDomainEventService _domainEventService;
     private readonly ICurrentUserService _currentUserService;
 
     public InspectionRequestDbContext(DbContextOptions<InspectionRequestDbContext> options,
-        IDateTimeProvider dateTimeProvider, ICurrentUserService currentUserService)
+        IDateTimeProvider dateTimeProvider, IDomainEventService domainEventService, ICurrentUserService currentUserService)
         : base(options)
     {
         _dateTimeProvider = dateTimeProvider;
+        _domainEventService = domainEventService;
         _currentUserService = currentUserService;
     }
 
@@ -58,7 +61,15 @@ public class InspectionRequestDbContext : DbContext
 
         }
 
+        var events = ChangeTracker.Entries<IHasDomainEvents>()
+            .Select(x => x.Entity.DomainEvents)
+            .SelectMany(x => x)
+            .Where(domainEvent => !domainEvent.IsPublished)
+            .ToArray();
+
         var result = await base.SaveChangesAsync(cancellationToken);
+
+        await DispatchEvents(events);
 
         return result;
     }
@@ -67,5 +78,14 @@ public class InspectionRequestDbContext : DbContext
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(builder);
+    }
+
+        private async Task DispatchEvents(DomainEvent[] events)
+    {
+        foreach (var @event in events)
+        {
+            @event.IsPublished = true;
+            await _domainEventService.Publish(@event);
+        }
     }
 }
