@@ -9,4 +9,6 @@ public interface IUserRepository
     void Add(User user);
     Task<ErrorOr<bool>> GrantRole(string username, string rolename);
     Task<User?> GetByUsername(string username);
+
+    Task<User?> GetByRefreshToken(string token);
 }

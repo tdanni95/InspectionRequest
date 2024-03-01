@@ -1,7 +1,10 @@
 using InspectionRequestAPI.Contracts;
+using InspectionRequestAPI.Contracts.auth;
+using InspectionRequestAPI.Feateures.Users;
 using InspectionRequestAPI.Feateures.Users.Register;
 using MapsterMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InspectionRequestAPI.Controllers;
@@ -16,7 +19,8 @@ public class UsersController : ApiController
         _sender = sender;
         _mapper = mapper;
     }
-    [HttpPost]
+    [HttpPost("register")]
+    [AllowAnonymous]
     public async Task<IActionResult> Register(RegisterRequest registerRequest)
     {
         var command = _mapper.Map<RegisterCommand>(registerRequest);
@@ -24,6 +28,34 @@ public class UsersController : ApiController
 
         return result.Match(
             created => NoContent(),
+            errors => Problem(errors)
+        );
+    }
+
+    [HttpPost("login")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var query = _mapper.Map<LoginQuery>(request);
+
+        var result = await _sender.Send(query);
+
+        return result.Match(
+            authresult => Ok(authresult),
+            errors => Problem(errors)
+        );
+    }
+
+    [HttpPost("refreshtoken")]
+    [AllowAnonymous]
+    public async Task<IActionResult> RefreshToken(TokenRefreshRequest request)
+    {
+        var query = _mapper.Map<TokenRefreshQuery>(request);
+
+        var result = await _sender.Send(query);
+
+        return result.Match(
+            authresult => Ok(authresult),
             errors => Problem(errors)
         );
     }

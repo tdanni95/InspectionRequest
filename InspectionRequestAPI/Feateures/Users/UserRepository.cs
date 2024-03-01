@@ -35,4 +35,9 @@ public class UserRepository : IUserRepository
     {
         return await _dbContext.users.FirstOrDefaultAsync(u => u.Login == username);
     }
+
+    public async Task<User?> GetByRefreshToken(string token)
+    {
+        return await _dbContext.users.FirstOrDefaultAsync(u => u.RefreshToken.Token == token);
+    }
 }
