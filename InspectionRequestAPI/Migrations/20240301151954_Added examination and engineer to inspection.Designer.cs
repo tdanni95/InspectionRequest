@@ -3,6 +3,7 @@ using System;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspectionRequestAPI.Migrations
 {
     [DbContext(typeof(InspectionRequestDbContext))]
-    partial class InspectionRequestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240301151954_Added examination and engineer to inspection")]
+    partial class Addedexaminationandengineertoinspection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -277,7 +280,7 @@ namespace InspectionRequestAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<uint>("SizeInNm")
+                    b.Property<uint>("Size")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

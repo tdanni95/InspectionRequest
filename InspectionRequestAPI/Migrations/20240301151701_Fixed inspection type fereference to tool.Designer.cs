@@ -3,6 +3,7 @@ using System;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspectionRequestAPI.Migrations
 {
     [DbContext(typeof(InspectionRequestDbContext))]
-    partial class InspectionRequestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240301151701_Fixed inspection type fereference to tool")]
+    partial class Fixedinspectiontypefereferencetotool
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -146,23 +149,17 @@ namespace InspectionRequestAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid>("ExaminationId")
+                    b.Property<DateTime?>("FinishedAd")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("FinishedAd")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<uint>("Order")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid?>("PerformedById")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ExaminationId");
-
-                    b.HasIndex("PerformedById");
 
                     b.ToTable("inspections");
                 });
@@ -277,7 +274,7 @@ namespace InspectionRequestAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<uint>("SizeInNm")
+                    b.Property<uint>("Size")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
@@ -418,23 +415,6 @@ namespace InspectionRequestAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("ToolUsedToPerform");
-                });
-
-            modelBuilder.Entity("InspectionRequestAPI.Entities.Inspection", b =>
-                {
-                    b.HasOne("InspectionRequestAPI.Entities.Examination", "Examination")
-                        .WithMany()
-                        .HasForeignKey("ExaminationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("InspectionRequestAPI.Entities.User", "PerformedBy")
-                        .WithMany()
-                        .HasForeignKey("PerformedById");
-
-                    b.Navigation("Examination");
-
-                    b.Navigation("PerformedBy");
                 });
 
             modelBuilder.Entity("InspectionRequestAPI.Entities.InspectionRequest", b =>

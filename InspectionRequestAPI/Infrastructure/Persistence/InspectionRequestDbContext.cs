@@ -25,6 +25,7 @@ public class InspectionRequestDbContext : DbContext
 
     public DbSet<Attendance> attendances { get; set; }
     public DbSet<ChemicalInspection> chemicalInspections { get; set; }
+    public DbSet<Examination> examinations { get; set; }
     public DbSet<Inspection> inspections { get; set; }
     public DbSet<InspectionRequest> inspectionRequests { get; set; }
     public DbSet<InspectionType> inspectionTypes { get; set; }

@@ -1,4 +1,6 @@
 using InspectionRequestAPI.Infrastructure;
+using InspectionRequestAPI.Infrastructure.Persistence;
+using InspectionRequestAPI.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,20 @@ app.UseExceptionHandler("/error");
 //     app.UseSwagger();
 //     app.UseSwaggerUI();
 // }
+
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<InspectionRequestDbContext>();
+    await SeedToolsAndExaminations.Seed(context);
+    await SeedParticles.Seed(context);
+}
+catch (Exception ex)
+{
+    var logger = services.GetService<ILogger<Program>>();
+    logger!.LogError(ex, "An error occurred during migration");
+}
 
 app.UseHttpsRedirection();
 app.MapControllers();

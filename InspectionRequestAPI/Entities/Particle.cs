@@ -4,6 +4,7 @@ public class Particle
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
-    public uint Size { get; set; }
+    //nanumeter,  one billionth of a meter
+    public uint SizeInNm { get; set; }
     public List<ChemicalInspection> ChemicalInspections { get; set; } = new();
 }
