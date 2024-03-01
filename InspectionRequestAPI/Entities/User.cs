@@ -6,6 +6,7 @@ namespace InspectionRequestAPI.Entities;
 public class User : IHasDomainEvents
 {
     public Guid Id { get; set; }
+    public RefreshToken? RefreshToken { get; set; } = null;
     public bool IsEngineer { get; set; } = false;
     public bool IsAdmin { get; set; } = false;
     public string ForName { get; set; } = null!;
@@ -16,5 +17,5 @@ public class User : IHasDomainEvents
     public string PhoneNumber { get; set; } = string.Empty;
     public List<Tool> ToolsICanUse { get; set; } = new();
     public List<Attendance> Attendances { get; set; } = new();
-    public List<DomainEvent> DomainEvents {get;} = new();
+    public List<DomainEvent> DomainEvents { get; } = new();
 }

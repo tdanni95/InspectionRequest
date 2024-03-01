@@ -9,5 +9,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.Ignore(u => u.DomainEvents);
+
+        builder.OwnsOne(u => u.RefreshToken);
     }
 }

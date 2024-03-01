@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services
     .AddApplication()
+    .AddAuth(builder.Configuration)
     .AddInfraStructure(builder.Configuration);
 
 var app = builder.Build();

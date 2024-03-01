@@ -3,6 +3,7 @@ using System;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspectionRequestAPI.Migrations
 {
     [DbContext(typeof(InspectionRequestDbContext))]
-    partial class InspectionRequestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240301070918_recreate")]
+    partial class recreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
@@ -422,34 +425,6 @@ namespace InspectionRequestAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("ParentInspection");
-                });
-
-            modelBuilder.Entity("InspectionRequestAPI.Entities.User", b =>
-                {
-                    b.OwnsOne("InspectionRequestAPI.Entities.RefreshToken", "RefreshToken", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<DateTime>("Created")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<DateTime>("Expires")
-                                .HasColumnType("TEXT");
-
-                            b1.Property<string>("Token")
-                                .IsRequired()
-                                .HasColumnType("TEXT");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
-                    b.Navigation("RefreshToken");
                 });
 
             modelBuilder.Entity("ToolUser", b =>

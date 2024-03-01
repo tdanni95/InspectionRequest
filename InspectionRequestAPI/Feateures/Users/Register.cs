@@ -1,5 +1,7 @@
 using ErrorOr;
 using FluentValidation;
+using InspectionRequestAPI.Common.Data;
+using InspectionRequestAPI.Common.Interfaces;
 using InspectionRequestAPI.Common.Models;
 using InspectionRequestAPI.Entities;
 using InspectionRequestAPI.Infrastructure.Persistence;
@@ -24,33 +26,38 @@ public class RegisterCommandValidator : AbstractValidator<RegisterCommand>
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<Created>>
 {
-    private readonly InspectionRequestDbContext _dbContext;
+    private readonly IUnitOfWork _unitOfWork;
+    private readonly IPasswordHandler _passwordHandler;
 
-    public RegisterCommandHandler(InspectionRequestDbContext dbContext)
+    public RegisterCommandHandler(IUnitOfWork unitOfWork, IPasswordHandler passwordHandler)
     {
-        _dbContext = dbContext;
+        _unitOfWork = unitOfWork;
+        _passwordHandler = passwordHandler;
     }
     public async Task<ErrorOr<Created>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
 
+        if(await _unitOfWork.UserRepository.IsUserNameTaken(request.Login)) return Errors.User.UserNameTaken;
+
+        var newPassword = _passwordHandler.HashPassword(request.Password);
         var User = new User
         {
             Id = Guid.NewGuid(),
             ForName = request.ForName,
             SurName = request.SurName,
             Login = request.Login,
-            Password = request.Password,
+            Password = newPassword,
             Email = request.Email,
             PhoneNumber = request.PhoneNumber
         };
 
         User.DomainEvents.Add(new UserRegisteredDomainEvent(User));
 
-        _dbContext.users.Add(User);
-        await _dbContext.SaveChangesAsync();
+        _unitOfWork.UserRepository.Add(User);
 
-        return Result.Created;
+        if(await _unitOfWork.Complete()) return Result.Created;
+
+        return Error.Failure();
     }
 
     public class UserRegisteredDomainEvent : DomainEvent

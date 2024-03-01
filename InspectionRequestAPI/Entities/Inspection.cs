@@ -7,4 +7,5 @@ public class Inspection
     public DateTime? FinishedAd { get; set; }
     public uint Order { get; set; } = 1;
     public Tool Tool { get; set; } = null!;
+    public List<InspectionRequest> InspectionRequests { get; set; } = new();
 }

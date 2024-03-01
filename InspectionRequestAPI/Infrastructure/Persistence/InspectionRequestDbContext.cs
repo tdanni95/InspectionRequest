@@ -4,7 +4,6 @@ using InspectionRequestAPI.Common.Interfaces;
 using InspectionRequestAPI.Common.Models;
 using InspectionRequestAPI.Entities;
 using InspectionRequestAPI.Entities.Helpers;
-using InspectionRequestAPI.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace InspectionRequestAPI.Infrastructure.Persistence;
@@ -33,6 +32,7 @@ public class InspectionRequestDbContext : DbContext
     public DbSet<Particle> particles { get; set; }
     public DbSet<Tool> tools { get; set; }
     public DbSet<User> users { get; set; }
+    public DbSet<BlockedTimes> blockedTimes { get; set; }
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -80,7 +80,7 @@ public class InspectionRequestDbContext : DbContext
         base.OnModelCreating(builder);
     }
 
-        private async Task DispatchEvents(DomainEvent[] events)
+    private async Task DispatchEvents(DomainEvent[] events)
     {
         foreach (var @event in events)
         {

@@ -11,14 +11,44 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspectionRequestAPI.Migrations
 {
     [DbContext(typeof(InspectionRequestDbContext))]
-    [Migration("20240229155636_Fixing tables")]
-    partial class Fixingtables
+    [Migration("20240301071933_Refresh token")]
+    partial class Refreshtoken
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");
+
+            modelBuilder.Entity("ChemicalInspectionParticle", b =>
+                {
+                    b.Property<Guid>("ChemicalInspectionsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ParticlesId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ChemicalInspectionsId", "ParticlesId");
+
+                    b.HasIndex("ParticlesId");
+
+                    b.ToTable("ChemicalInspectionParticle");
+                });
+
+            modelBuilder.Entity("InspectionInspectionRequest", b =>
+                {
+                    b.Property<Guid>("InspectionRequestsId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("InspectionsId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("InspectionRequestsId", "InspectionsId");
+
+                    b.HasIndex("InspectionsId");
+
+                    b.ToTable("InspectionInspectionRequest");
+                });
 
             modelBuilder.Entity("InspectionRequestAPI.Entities.Attendance", b =>
                 {
@@ -44,6 +74,30 @@ namespace InspectionRequestAPI.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("attendances");
+                });
+
+            modelBuilder.Entity("InspectionRequestAPI.Entities.BlockedTimes", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("AllDay")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("blockedTimes");
                 });
 
             modelBuilder.Entity("InspectionRequestAPI.Entities.ChemicalInspection", b =>
@@ -78,9 +132,6 @@ namespace InspectionRequestAPI.Migrations
                     b.Property<DateTime?>("FinishedAd")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("InspectionRequestId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -92,8 +143,6 @@ namespace InspectionRequestAPI.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("InspectionRequestId");
 
                     b.HasIndex("ToolId");
 
@@ -131,12 +180,18 @@ namespace InspectionRequestAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<uint>("Prio")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("RequestorId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("RequestorRequest")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<uint>("SubPrio")
+                        .HasColumnType("INTEGER");
 
                     b.Property<bool>("Visible")
                         .HasColumnType("INTEGER");
@@ -200,9 +255,6 @@ namespace InspectionRequestAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("ChemicalInspectionId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -211,8 +263,6 @@ namespace InspectionRequestAPI.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ChemicalInspectionId");
 
                     b.ToTable("particles");
                 });
@@ -288,6 +338,36 @@ namespace InspectionRequestAPI.Migrations
                     b.ToTable("ToolUser");
                 });
 
+            modelBuilder.Entity("ChemicalInspectionParticle", b =>
+                {
+                    b.HasOne("InspectionRequestAPI.Entities.ChemicalInspection", null)
+                        .WithMany()
+                        .HasForeignKey("ChemicalInspectionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InspectionRequestAPI.Entities.Particle", null)
+                        .WithMany()
+                        .HasForeignKey("ParticlesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InspectionInspectionRequest", b =>
+                {
+                    b.HasOne("InspectionRequestAPI.Entities.InspectionRequest", null)
+                        .WithMany()
+                        .HasForeignKey("InspectionRequestsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("InspectionRequestAPI.Entities.Inspection", null)
+                        .WithMany()
+                        .HasForeignKey("InspectionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("InspectionRequestAPI.Entities.Attendance", b =>
                 {
                     b.HasOne("InspectionRequestAPI.Entities.User", null)
@@ -308,10 +388,6 @@ namespace InspectionRequestAPI.Migrations
 
             modelBuilder.Entity("InspectionRequestAPI.Entities.Inspection", b =>
                 {
-                    b.HasOne("InspectionRequestAPI.Entities.InspectionRequest", null)
-                        .WithMany("Inspections")
-                        .HasForeignKey("InspectionRequestId");
-
                     b.HasOne("InspectionRequestAPI.Entities.Tool", "Tool")
                         .WithMany("Inspections")
                         .HasForeignKey("ToolId")
@@ -351,11 +427,32 @@ namespace InspectionRequestAPI.Migrations
                     b.Navigation("ParentInspection");
                 });
 
-            modelBuilder.Entity("InspectionRequestAPI.Entities.Particle", b =>
+            modelBuilder.Entity("InspectionRequestAPI.Entities.User", b =>
                 {
-                    b.HasOne("InspectionRequestAPI.Entities.ChemicalInspection", null)
-                        .WithMany("Particles")
-                        .HasForeignKey("ChemicalInspectionId");
+                    b.OwnsOne("InspectionRequestAPI.Entities.RefreshToken", "RefreshToken", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<DateTime>("Created")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<DateTime>("Expires")
+                                .HasColumnType("TEXT");
+
+                            b1.Property<string>("Token")
+                                .IsRequired()
+                                .HasColumnType("TEXT");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("RefreshToken");
                 });
 
             modelBuilder.Entity("ToolUser", b =>
@@ -371,16 +468,6 @@ namespace InspectionRequestAPI.Migrations
                         .HasForeignKey("ToolsICanUseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("InspectionRequestAPI.Entities.ChemicalInspection", b =>
-                {
-                    b.Navigation("Particles");
-                });
-
-            modelBuilder.Entity("InspectionRequestAPI.Entities.InspectionRequest", b =>
-                {
-                    b.Navigation("Inspections");
                 });
 
             modelBuilder.Entity("InspectionRequestAPI.Entities.Tool", b =>
