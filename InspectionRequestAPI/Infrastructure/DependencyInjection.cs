@@ -4,6 +4,7 @@ using FluentValidation;
 using InspectionRequestAPI.Common.Behaviours;
 using InspectionRequestAPI.Common.Data;
 using InspectionRequestAPI.Common.Interfaces;
+using InspectionRequestAPI.Feateures.Particles;
 using InspectionRequestAPI.Feateures.Users;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using InspectionRequestAPI.Infrastructure.Services;
@@ -25,7 +26,7 @@ public static class DependencyInjection
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-
+        
 
         ValidatorOptions.Global.LanguageManager.Enabled = false;
 
@@ -38,6 +39,8 @@ public static class DependencyInjection
     }
     public static IServiceCollection AddInfraStructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddHttpContextAccessor();
+
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         services.AddDbContext<InspectionRequestDbContext>(options =>
         {
@@ -49,6 +52,7 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUserService, CurrentUserService>();
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IParticleRepository, ParticleRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
@@ -75,6 +79,12 @@ public static class DependencyInjection
                 IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(jwtSettings.Secret))
             });
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("ElevatedRights", policy =>
+                  policy.RequireRole("Admin", "Engineer"));
+        });
 
         return services;
     }

@@ -42,11 +42,11 @@ public class InspectionRequestDbContext : DbContext
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedBy = _currentUserService.CurrentUser();
+                    entry.Entity.CreatedBy = (Guid)_currentUserService.UserId!;
                     entry.Entity.Created = _dateTimeProvider.Now;
                     break;
                 case EntityState.Modified:
-                    entry.Entity.CreatedBy = _currentUserService.CurrentUser();
+                    entry.Entity.CreatedBy = (Guid)_currentUserService.UserId!;
                     entry.Entity.Created = _dateTimeProvider.Now;
                     break;
                 case EntityState.Detached:
