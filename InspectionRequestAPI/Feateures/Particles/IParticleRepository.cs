@@ -8,4 +8,5 @@ public interface IParticleRepository
     Task<Particle?> GetById(Guid Id);
     Task<Particle?> GetByName(string name);
     void Add(Particle particle);
+    void Delete(Particle particle);
 }

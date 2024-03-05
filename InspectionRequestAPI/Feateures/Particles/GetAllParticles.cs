@@ -7,14 +7,10 @@ using MediatR;
 
 namespace InspectionRequestAPI.Feateures.Particles;
 
-public record GetAllParticlesQuery() : IRequest<ErrorOr<List<ParticleResponse>>>;
+public record GetAllParticlesQuery() : IRequest<ErrorOr<List<Particle>>>;
 
-public class GetAllParticlesQueryHandler(IMapper _mapper, IUnitOfWork _uow) : IRequestHandler<GetAllParticlesQuery, ErrorOr<List<ParticleResponse>>>
+public class GetAllParticlesQueryHandler(IUnitOfWork _uow) : IRequestHandler<GetAllParticlesQuery, ErrorOr<List<Particle>>>
 {
-    public async Task<ErrorOr<List<ParticleResponse>>> Handle(GetAllParticlesQuery request, CancellationToken cancellationToken)
-    {
-        var particles = await _uow.ParticleRepository.GetAll();
-
-        return _mapper.Map<List<ParticleResponse>>(particles);
-    }
+    public async Task<ErrorOr<List<Particle>>> Handle(GetAllParticlesQuery request, CancellationToken cancellationToken) => await _uow.ParticleRepository.GetAll();
+    
 }
