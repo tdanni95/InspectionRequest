@@ -7,5 +7,6 @@ public class Inspection
     public User? PerformedBy { get; set; }
     public DateTime? FinishedAd { get; set; }
     public uint Order { get; set; } = 1;
+    public uint PlannedDuration { get; set; }
     public List<InspectionRequest> InspectionRequests { get; set; } = new();
 }

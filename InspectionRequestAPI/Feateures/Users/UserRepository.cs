@@ -38,6 +38,6 @@ public class UserRepository : IUserRepository
 
     public async Task<User?> GetByRefreshToken(string token)
     {
-        return await _dbContext.users.FirstOrDefaultAsync(u => u.RefreshToken.Token == token);
+        return await _dbContext.users.FirstOrDefaultAsync(u => u.RefreshToken!.Token == token);
     }
 }

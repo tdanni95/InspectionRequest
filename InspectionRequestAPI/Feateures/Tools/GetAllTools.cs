@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ErrorOr;
+using InspectionRequestAPI.Common.Data;
+using InspectionRequestAPI.Entities;
+using MediatR;
 
-namespace InspectionRequestAPI.Feateures.Tools
+namespace InspectionRequestAPI.Feateures.Tools;
+
+public record GetAllToolsQuery() : IRequest<ErrorOr<List<Tool>>>;
+
+public class GetAllToolsQueryHandler(IUnitOfWork _uow) : IRequestHandler<GetAllToolsQuery, ErrorOr<List<Tool>>>
 {
-    public class GetAllTools
-    {
-        
-    }
+    public async Task<ErrorOr<List<Tool>>> Handle(GetAllToolsQuery request, CancellationToken cancellationToken) => await _uow.ToolRepository.GetAll();
 }

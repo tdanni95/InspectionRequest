@@ -3,6 +3,7 @@ using System;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InspectionRequestAPI.Migrations
 {
     [DbContext(typeof(InspectionRequestDbContext))]
-    partial class InspectionRequestDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240305130240_Inspection planned duration")]
+    partial class Inspectionplannedduration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.2");

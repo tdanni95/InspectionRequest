@@ -4,7 +4,9 @@ using FluentValidation;
 using InspectionRequestAPI.Common.Behaviours;
 using InspectionRequestAPI.Common.Data;
 using InspectionRequestAPI.Common.Interfaces;
+using InspectionRequestAPI.Feateures.InspectionTypes;
 using InspectionRequestAPI.Feateures.Particles;
+using InspectionRequestAPI.Feateures.Tools;
 using InspectionRequestAPI.Feateures.Users;
 using InspectionRequestAPI.Infrastructure.Persistence;
 using InspectionRequestAPI.Infrastructure.Services;
@@ -53,6 +55,8 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IParticleRepository, ParticleRepository>();
+        services.AddScoped<IToolRepository, ToolRepository>();
+        services.AddScoped<IInspectionTypeRepository, InspectionTypeRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
